@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>쇼핑 리스트</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 16px;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      width: 100%;
+      max-width: 480px;
+      padding: 32px 28px;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h1 span.icon {
+      font-size: 1.8rem;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .input-row input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+      color: #1a1a2e;
+    }
+
+    .input-row input:focus {
+      border-color: #6366f1;
+    }
+
+    .input-row input::placeholder {
+      color: #a0aec0;
+    }
+
+    .input-row button {
+      padding: 12px 20px;
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .input-row button:hover {
+      background: #4f46e5;
+    }
+
+    .input-row button:active {
+      transform: scale(0.97);
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: #718096;
+      margin-bottom: 12px;
+      padding: 0 2px;
+    }
+
+    .stats .checked-count {
+      color: #48bb78;
+      font-weight: 600;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 14px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      transition: background 0.15s, opacity 0.2s;
+    }
+
+    li:hover {
+      background: #edf2f7;
+    }
+
+    li.checked {
+      background: #f0fff4;
+      border-color: #c6f6d5;
+      opacity: 0.75;
+    }
+
+    li input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: #48bb78;
+      flex-shrink: 0;
+    }
+
+    li .item-text {
+      flex: 1;
+      font-size: 1rem;
+      color: #2d3748;
+      word-break: break-word;
+      transition: color 0.2s;
+    }
+
+    li.checked .item-text {
+      text-decoration: line-through;
+      color: #a0aec0;
+    }
+
+    li .delete-btn {
+      background: none;
+      border: none;
+      color: #cbd5e0;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    li .delete-btn:hover {
+      color: #fc8181;
+      background: #fff5f5;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 0 20px;
+      color: #a0aec0;
+    }
+
+    .empty-state .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+    }
+
+    .empty-state p {
+      font-size: 0.95rem;
+    }
+
+    .clear-btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 10px;
+      background: none;
+      border: 1.5px solid #fc8181;
+      color: #fc8181;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      font-weight: 500;
+    }
+
+    .clear-btn:hover {
+      background: #fff5f5;
+    }
+
+    .clear-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><span class="icon">🛒</span> 쇼핑 리스트</h1>
+
+    <div class="input-row">
+      <input type="text" id="itemInput" placeholder="아이템 입력..." autocomplete="off" />
+      <button onclick="addItem()">추가</button>
+    </div>
+
+    <div class="stats">
+      <span id="totalCount">전체 0개</span>
+      <span id="checkedCount" class="checked-count"></span>
+    </div>
+
+    <ul id="shoppingList"></ul>
+
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">🛍️</div>
+      <p>아직 아이템이 없어요.<br>위에서 추가해 보세요!</p>
+    </div>
+
+    <button class="clear-btn" id="clearBtn" onclick="clearChecked()" disabled>
+      완료된 항목 삭제
+    </button>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'shopping-list-items';
+
+    let items = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+    function save() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    }
+
+    function render() {
+      const list = document.getElementById('shoppingList');
+      const emptyState = document.getElementById('emptyState');
+      const totalCount = document.getElementById('totalCount');
+      const checkedCount = document.getElementById('checkedCount');
+      const clearBtn = document.getElementById('clearBtn');
+
+      list.innerHTML = '';
+
+      const checkedItems = items.filter(i => i.checked);
+
+      totalCount.textContent = `전체 ${items.length}개`;
+      checkedCount.textContent = checkedItems.length > 0
+        ? `✓ ${checkedItems.length}개 완료`
+        : '';
+
+      clearBtn.disabled = checkedItems.length === 0;
+      emptyState.style.display = items.length === 0 ? 'block' : 'none';
+
+      items.forEach((item, index) => {
+        const li = document.createElement('li');
+        if (item.checked) li.classList.add('checked');
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = item.checked;
+        checkbox.addEventListener('change', () => toggleItem(index));
+
+        const span = document.createElement('span');
+        span.className = 'item-text';
+        span.textContent = item.text;
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.innerHTML = '✕';
+        deleteBtn.title = '삭제';
+        deleteBtn.addEventListener('click', () => deleteItem(index));
+
+        li.appendChild(checkbox);
+        li.appendChild(span);
+        li.appendChild(deleteBtn);
+        list.appendChild(li);
+      });
+    }
+
+    function addItem() {
+      const input = document.getElementById('itemInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      items.push({ text, checked: false });
+      save();
+      render();
+
+      input.value = '';
+      input.focus();
+    }
+
+    function toggleItem(index) {
+      items[index].checked = !items[index].checked;
+      save();
+      render();
+    }
+
+    function deleteItem(index) {
+      items.splice(index, 1);
+      save();
+      render();
+    }
+
+    function clearChecked() {
+      items = items.filter(i => !i.checked);
+      save();
+      render();
+    }
+
+    document.getElementById('itemInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') addItem();
+    });
+
+    render();
+  </script>
+</body>
+</html>
