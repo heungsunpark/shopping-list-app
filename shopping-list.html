@@ -301,6 +301,7 @@
       });
 
       item.checked = newChecked;
+      item.completed_at = newChecked ? new Date().toISOString() : null;
       render();
     }
 
