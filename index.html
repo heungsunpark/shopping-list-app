@@ -304,7 +304,7 @@
     }
 
     async function clearChecked() {
-      const checkedIds = items.filter(i => i.checked).map(i => `id=eq.${i.id}`).join(',');
+      const checkedIds = items.filter(i => i.checked).map(i => `id.eq.${i.id}`).join(',');
       await fetch(`${SUPABASE_URL}/rest/v1/shopping_items?or=(${checkedIds})`, {
         method: 'DELETE',
         headers
